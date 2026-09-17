@@ -1,5 +1,6 @@
-
+```python
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from predict import predict_diagnosis
@@ -9,6 +10,18 @@ app = FastAPI(
     title="Spondyloarthropathy Diagnosis API",
     description="Machine Learning API for spondyloarthropathy classification",
     version="1.0.0"
+)
+
+
+# CORS configuration for the Base44 frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://spa-insight-lab.base44.app"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
@@ -40,7 +53,6 @@ def home():
 
 @app.post("/predict")
 def predict(patient_data: PatientData):
-
     patient_dict = patient_data.model_dump()
 
     prediction, probabilities = predict_diagnosis(patient_dict)
@@ -49,3 +61,4 @@ def predict(patient_data: PatientData):
         "prediction": prediction,
         "probabilities": probabilities
     }
+```
