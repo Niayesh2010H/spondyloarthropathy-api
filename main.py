@@ -61,4 +61,3 @@ def predict(patient_data: PatientData):
         "prediction": prediction,
         "probabilities": probabilities
     }
-```
