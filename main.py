@@ -1,4 +1,3 @@
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -13,13 +12,12 @@ app = FastAPI(
 )
 
 
-# CORS configuration for the Base44 frontend
+# CORS configuration
+# Allows the Base44 frontend to communicate with the API.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://spa-insight-lab.base44.app"
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
