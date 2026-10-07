@@ -1,31 +1,19 @@
-import os
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from openai import OpenAI
-
 
 app = FastAPI(
     title="Spondyloarthropathy AI Analysis API",
-    description="AI API for spondyloarthropathy analysis",
-    version="2.0.0"
+    description="AI analysis API for spondyloarthropathy research prototype",
+    version="2.1.0"
 )
 
-
-# CORS configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
-)
-
-
-# OpenAI client
-client = OpenAI(
-    api_key=os.environ.get("OPENAI_API_KEY")
 )
 
 
@@ -60,46 +48,58 @@ def predict(patient_data: PatientData):
 
     patient = patient_data.model_dump()
 
-    prompt = f"""
-You are an AI assistant for a rheumatology research prototype.
+    # Temporary research/demo analysis.
+    # This does NOT use a real medical AI model.
 
-Analyze the following patient information:
+    findings = []
 
-{patient}
+    if patient["Inflammatory_Back_Pain"] == "Yes":
+        findings.append("Inflammatory back pain is present.")
 
-The possible spondyloarthropathy classes are:
-- AS = Ankylosing Spondylitis
-- EnA = Enteropathic Arthritis
-- PsA = Psoriatic Arthritis
-- ReA = Reactive Arthritis
-- Undifferentiated = Undifferentiated Spondyloarthropathy
+    if patient["Enthesitis"] == "Yes":
+        findings.append("Enthesitis is present.")
 
-Provide a careful, medically cautious research-oriented analysis.
+    if patient["Uveitis"] == "Yes":
+        findings.append("Uveitis is present.")
 
-Your response MUST contain:
+    if patient["HLA_B27"] == "Positive":
+        findings.append("HLA-B27 is reported as positive.")
 
-1. Predicted Classification
-2. Relative Likelihood
-3. Important Findings
-4. Clinical Reasoning
-5. Medical Disclaimer
+    if patient["Psoriasis"] == "Yes":
+        findings.append("Psoriasis is present.")
 
-Do NOT invent numerical probabilities or claim diagnostic certainty.
+    if patient["IBD"] == "Yes":
+        findings.append("Inflammatory bowel disease is reported.")
 
-This is a research prototype using user-provided information.
-It is NOT a medical diagnosis and must NOT replace evaluation by a qualified healthcare professional.
-"""
+    if patient["Recent_Infection"] == "Yes":
+        findings.append("A recent infection is reported.")
 
-    response = client.responses.create(
-        model="gpt-5.5",
-        instructions=(
-            "You are a careful medical research assistant. "
-            "Do not present your analysis as a definitive diagnosis. "
-            "Do not invent missing clinical information."
+    if patient["Dactylitis"] == "Yes":
+        findings.append("Dactylitis is present.")
+
+    if patient["Peripheral_Arthritis"] == "Yes":
+        findings.append("Peripheral arthritis is present.")
+
+    if not findings:
+        findings.append("No selected positive findings were identified.")
+
+    analysis = {
+        "status": "demo",
+        "predicted_classification": "Requires Further Evaluation",
+        "relative_likelihood": "Not determined",
+        "important_findings": findings,
+        "clinical_reasoning": (
+            "This is a technical research prototype. "
+            "The provided information is summarized for demonstration "
+            "and does not constitute a medical diagnosis."
         ),
-        input=prompt
-    )
+        "medical_disclaimer": (
+            "This prototype is not a medical device and must not be used "
+            "to diagnose or treat patients. Clinical decisions require "
+            "evaluation by a qualified healthcare professional."
+        )
+    }
 
     return {
-        "analysis": response.output_text
+        "analysis": analysis
     }
